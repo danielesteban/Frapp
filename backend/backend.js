@@ -147,14 +147,14 @@ BACKEND = {
 		});
 	},
 	update : function(file, editor, callback) {
-		editor.setAlwaysOnTop(true);
+		editor.WIN.setAlwaysOnTop(true);
 		frapps.forEach(function(f) {
 			var repo = lib.getRepoData(f.FRAPP);
 			file.indexOf(repo.path) === 0 && f.uuid !== editor.uuid && f.reload();
 		});
-		editor.focus();
+		editor.WIN.focus();
 		setTimeout(function() {
-			editor.setAlwaysOnTop(false);
+			editor.WIN.setAlwaysOnTop(false);
 			callback();
 		}, 500);
 	},

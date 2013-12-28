@@ -114,7 +114,7 @@ Frapp.prototype.onLoad = function() {
 		saveFile : function(filePath, data, callback) {
 			var fullPath = path.join(config.frappsPath, filePath);
 			lib.checkPath(fullPath) && fs.writeFile(fullPath, data, function(err) {
-				self.BACKEND.API.update(filePath, self.WIN, callback);
+				self.BACKEND.API.update(filePath, self, callback);
 			});
 		},
 		setTitle : function(title) {
