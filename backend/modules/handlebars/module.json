@@ -1,0 +1,6 @@
+{
+	"name" : "handlebars",
+	"js" : [
+		"handlebars-v1.2.0.min.js"
+	]
+}

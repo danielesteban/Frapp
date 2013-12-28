@@ -1,0 +1,7 @@
+.DS_Store
+._*
+*~
+\#*\#
+Frapp.app/
+frapps/
+node_modules/

@@ -1,0 +1,6 @@
+{
+	"name" : "session",
+	"js" : [
+		"session.js"
+	]
+}

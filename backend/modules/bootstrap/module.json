@@ -1,0 +1,9 @@
+{
+	"name" : "bootstrap",
+	"css" : [
+		"bootstrap-3.0.3.min.css"
+	],
+	"js" : [
+		"bootstrap-3.0.3.min.js"
+	]
+}

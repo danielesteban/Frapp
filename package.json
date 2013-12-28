@@ -1,0 +1,19 @@
+{
+	"name" : "Frapp",
+	"version" : "0.0.1",
+	"author" : "Daniel Esteban Nombela <dani@hellacoders.com>",
+	"dependencies" : {
+		"github-download" : "latest",
+		"node-github" : "latest",
+		"less" : "latest",
+		"mkdirp" : "latest",
+		"node-uuid" : "latest"
+	},
+	"window" : {
+		"show" : false
+	},
+	"webkit": {
+		"plugin" : true
+	},
+	"main" : "backend/backend.html"
+}
