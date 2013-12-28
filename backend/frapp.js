@@ -13,7 +13,7 @@ function Frapp(frapp, backend, params) {
 
 	this.PARAMS = params;
 	fs.exists(manifest, function(exists) {
-		if(!exists) return backend.API.install(frapp);
+		if(!exists) return backend.API.install(frapp, params);
 		lib.readJSON(manifest, function(frapp) {
 			var Window = backend.window.nwDispatcher.requireNwGui().Window;
 			self.FRAPP = frapp;

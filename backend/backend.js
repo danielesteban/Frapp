@@ -29,9 +29,9 @@ BACKEND = {
 		if(!menu) return this.menu();
 		Window.get().close(); 
 	},
-	install : function(frapp) {
+	install : function(frapp, params) {
 		lib.installApp(frapp, function() {
-			BACKEND.load(frapp);
+			BACKEND.load(frapp, params);
 		});
 	},
 	installed : function(callback) {
