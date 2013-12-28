@@ -8,6 +8,7 @@
 		"less" : "latest",
 		"mkdirp" : "latest",
 		"node-dir" : "latest",
+		"node-static" : "latest",
 		"node-uuid" : "latest"
 	},
 	"window" : {

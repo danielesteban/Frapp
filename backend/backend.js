@@ -5,11 +5,12 @@ var config = require('./config'),
 	lib = require('./lib'),
 	path = require('path'),
 	Storage = require('./storage'),
-	uuid = require('node-uuid');
-	Window = window.nwDispatcher.requireNwGui().Window,
+	uuid = require('node-uuid'),
+	Window = require('nw.gui').Window,
 	frapps = [];
 
 BACKEND = {
+	httpPort : 7866,
 	exit : function(uuid) {
 		var menu;
 		if(uuid) {
@@ -74,7 +75,7 @@ BACKEND = {
 											return frappsCb();
 										}
 										manifest.ctime = stats.ctime;
-										manifest.path = frappPath;
+										manifest.path = '/' + author + '/' + frapp;
 										frapps.push(manifest);
 										frappsCb();
 									});
@@ -152,11 +153,10 @@ BACKEND = {
 			var repo = lib.getRepoData(f.FRAPP);
 			file.indexOf(repo.path) === 0 && f.uuid !== editor.uuid && f.reload();
 		});
-		editor.WIN.focus();
 		setTimeout(function() {
 			editor.WIN.setAlwaysOnTop(false);
 			callback();
-		}, 500);
+		}, 250);
 	},
 	version : (function() {
 		var manifest = fs.readFileSync(path.join(process.cwd(), 'package.json'));
@@ -169,6 +169,32 @@ BACKEND = {
 	})()
 };
 
-BACKEND.signin(false, function() {
-	BACKEND.menu();
-}, true);
+/* HTTP Server */
+(function() {
+	var frappsServer = new (require('node-static').Server)(config.frappsPath, {cache: 0}),
+		modulesServer = new (require('node-static').Server)(config.modulesPath, {cache: 0}),
+		httpServer = require('http').createServer(function(request, response) {
+			request.addListener('end', function() {
+		    	if(request.url.substr(0, 9) === '/modules/') {
+		    		request.url = request.url.substr(8);
+		    		modulesServer.serve(request, response);
+		    	} else frappsServer.serve(request, response);
+		    }).resume();
+		});
+
+	httpServer.on('error', function(e) {
+		if(e.code !== "EADDRINUSE") return;
+		BACKEND.httpPort++;
+		setTimeout(function() {
+			httpServer.listen(BACKEND.httpPort, 'localhost');
+		}, 1);
+	});
+
+	httpServer.on('listening', function() {
+		BACKEND.signin(false, null, true);
+		BACKEND.menu();
+	});
+
+	httpServer.listen(BACKEND.httpPort, 'localhost');
+})();
+

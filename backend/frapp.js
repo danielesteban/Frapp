@@ -19,7 +19,7 @@ function Frapp(frapp, backend, params) {
 			self.FRAPP = frapp;
 			self.BACKEND = backend;
 			self.STORAGE = new Storage(repo.author + ':' + repo.name, backend.window);
-			self.WIN = Window.open('file://' + path.join(repo.fullPath, frapp.main), {
+			self.WIN = Window.open('http://localhost:' + backend.API.httpPort + '/' + repo.author + '/' + repo.name + '/' + frapp.main, {
 				position : 'center',
 				title : frapp.window && frapp.window.title ? frapp.window.title : frapp.name,
 				focus : true,
@@ -32,7 +32,7 @@ function Frapp(frapp, backend, params) {
 				this.close(true);
 				backend.API.exit(self.uuid);
 			});
-			self.WIN.on('loaded', self.onLoad.bind(self));
+			self.WIN.once('loaded', self.onLoad.bind(self));
 		});
 	});
 }
@@ -140,7 +140,7 @@ Frapp.prototype.onLoad = function() {
 		})()
 	};
 	window.addEventListener('keydown', function(e) {
-		e.metaKey && e.keyCode === 82 && this.FRAPP.reload();
+		e.metaKey && e.keyCode === 82 && self.reload();
 		e.metaKey && e.altKey && e.keyCode === 74 && this.FRAPP.showDevTools();
 	});
 	
@@ -150,7 +150,7 @@ Frapp.prototype.onLoad = function() {
 	menu.append(new gui.MenuItem({
 		label : 'Reload',
 		click : function() {
-			window.FRAPP.reload();
+			self.reload();
 		}
 	}));
 	menu.append(new gui.MenuItem({
@@ -175,9 +175,10 @@ Frapp.prototype.onLoad = function() {
 		loadModules = function() {
 			if(!modules.length) return init();
 			var module = modules.shift(),
-				modulePath = path.join(process.cwd(), 'backend', 'modules', module),
+				modulePath = path.join(config.modulesPath, module),
 				manifest = path.join(modulePath, 'module.json');
 
+			if(module === 'less') return lib.compileLess(self, loadModules);
 			fs.exists(manifest, function(exists) {
 				if(!exists) return loadModules();
 				lib.readJSON(manifest, function(module) {
@@ -193,11 +194,11 @@ Frapp.prototype.onLoad = function() {
 							loadModules();
 						};
 
-					if(!modFiles) return loadModules();
+					if(!modFiles) return modCb();
 
 					modCSS.forEach(function(css) {
 						var link = window.document.createElement('link');
-						link.href = path.join(modulePath, css);
+						link.href = '/modules/' + module.name + '/' + css;
 						link.rel = 'stylesheet';
 						link.addEventListener('load', modCb);
 						head.insertBefore(link, firstChild);
@@ -205,7 +206,7 @@ Frapp.prototype.onLoad = function() {
 
 					modJS.forEach(function(js) {
 						var script = window.document.createElement('script');
-						script.src = path.join(modulePath, js);
+						script.src = '/modules/' + module.name + '/' + js;
 						script.addEventListener('load', modCb);
 						head.insertBefore(script, firstChild);
 					});
@@ -229,7 +230,8 @@ Frapp.prototype.close = function() {
 };
 
 Frapp.prototype.reload = function() {
-	this.WIN.reloadIgnoringCache();
+	this.WIN.once('loaded', this.onLoad.bind(this));
+	this.WIN.window.location.reload();
 	this.WIN.title = this.FRAPP.window && this.FRAPP.window.title ? this.FRAPP.window.title : this.FRAPP.name;
 };
 

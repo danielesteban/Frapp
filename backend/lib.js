@@ -1,7 +1,8 @@
 var config = require('./config'),
+	dir = require('node-dir'),
 	fs = require('fs'),
 	ghdownload = require('github-download'),
-	dir = require('node-dir'),
+	less = require('less'),
 	mkdirp = require('mkdirp'),
 	path = require('path');
 
@@ -48,6 +49,24 @@ lib.prototype.compileTemplates = function(frapp, callback) {
 	
 	compile('templates', templatesPath, function() {
 		compile('partials', path.join(templatesPath, 'partials'), callback);
+	});
+};
+
+lib.prototype.compileLess = function(frapp, callback) {
+	var window = frapp.WIN.window,
+		repo = this.getRepoData(frapp.FRAPP),
+		lessPath = path.join(repo.fullPath, 'css', 'screen.less'),
+		parser = new(less.Parser);
+
+	fs.readFile(lessPath, {
+		encoding : 'utf-8'
+	}, function(err, css) {
+		parser.parse(css, function (err, tree) {
+			var style = window.document.createElement('style');
+			style.appendChild(window.document.createTextNode(tree.toCSS({compress : true})));
+			window.document.head.insertBefore(style, window.document.head.firstChild);
+		    callback();
+		});
 	});
 };
 
