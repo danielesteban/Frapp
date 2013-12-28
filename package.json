@@ -7,6 +7,7 @@
 		"node-github" : "latest",
 		"less" : "latest",
 		"mkdirp" : "latest",
+		"node-dir" : "latest",
 		"node-uuid" : "latest"
 	},
 	"window" : {
