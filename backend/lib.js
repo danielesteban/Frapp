@@ -62,6 +62,7 @@ lib.prototype.compileLess = function(frapp, callback) {
 	fs.readFile(lessPath, {
 		encoding : 'utf-8'
 	}, function(err, css) {
+		if(err) return callback();
 		parser.parse(css, function (err, tree) {
 			var style = window.document.createElement('style');
 			style.appendChild(window.document.createTextNode(tree.toCSS({compress : true})));

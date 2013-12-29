@@ -1,4 +1,5 @@
 (function() {
+	if(!LANG) return;
 	/* Lang detection/setup */
 	var browser_lang = navigator.language.split('-'), lang;
 	browser_lang.forEach(function(l) {

@@ -1,0 +1,6 @@
+{
+	"name" : "remotestorage",
+	"js" : [
+		"remotestorage.min.js"
+	]
+}
