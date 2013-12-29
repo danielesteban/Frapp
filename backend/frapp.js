@@ -8,35 +8,29 @@ var config = require('./config'),
 	Storage = require('./storage');
 
 function Frapp(frapp, backend, params, callback) {
-	var repo = lib.getRepoData(frapp),
-		manifest = path.join(repo.fullPath, 'package.json'),
+	var Window = backend.window.nwDispatcher.requireNwGui().Window,
+		repo = lib.getRepoData(frapp),
 		self = this;
 
 	this.PARAMS = params;
 	this.CALLBACK = callback;
-	fs.exists(manifest, function(exists) {
-		if(!exists) return backend.API.install(frapp, params, callback);
-		lib.readJSON(manifest, function(frapp) {
-			var Window = backend.window.nwDispatcher.requireNwGui().Window;
-			self.FRAPP = frapp;
-			self.BACKEND = backend;
-			self.STORAGE = new Storage(repo.author + ':' + repo.name, backend.window);
-			self.WIN = Window.open('http://localhost:' + backend.API.httpPort + '/' + repo.author + '/' + repo.name + '/' + frapp.main, {
-				position : 'center',
-				title : frapp.window && frapp.window.title ? frapp.window.title : frapp.name,
-				focus : true,
-				toolbar : false,
-				show : false,
-				width : frapp.window && frapp.window.width ? frapp.window.width : (window.screen.width * 0.9),
-				height : frapp.window && frapp.window.height ? frapp.window.height : (window.screen.height * 0.9)
-			});
-			self.WIN.on('close', function() {
-				this.close(true);
-				backend.API.exit(self.uuid);
-			});
-			self.WIN.once('loaded', self.onLoad.bind(self));
-		});
+	this.FRAPP = frapp;
+	this.BACKEND = backend;
+	this.STORAGE = new Storage(repo.author + ':' + repo.name, backend.window);
+	this.WIN = Window.open('http://localhost:' + backend.API.httpPort + '/' + repo.author + '/' + repo.name + '/' + frapp.main, {
+		position : 'center',
+		title : frapp.window && frapp.window.title ? frapp.window.title : frapp.name,
+		focus : true,
+		toolbar : false,
+		show : false,
+		width : frapp.window && frapp.window.width ? frapp.window.width : (window.screen.width * 0.9),
+		height : frapp.window && frapp.window.height ? frapp.window.height : (window.screen.height * 0.9)
 	});
+	this.WIN.on('close', function() {
+		this.close(true);
+		backend.API.exit(self.uuid);
+	});
+	this.WIN.once('loaded', self.onLoad.bind(self));
 }
 
 Frapp.prototype.onLoad = function() {

@@ -43,9 +43,9 @@ BACKEND = {
 					}).on('zip', function(zipUrl) {
 						installer && installer.WIN.window.$('small.url').text(zipUrl);
 					}).on('end', function() {
-						self.load(frapp, params, function() {
+						self.load(frapp, params, function(frapp) {
 							installer && installer.WIN.close();
-							callback && callback();
+							callback && callback(frapp);
 						});
 					});
 				});
@@ -115,12 +115,23 @@ BACKEND = {
 		});
 	},
 	load : function(frapp, params, callback) {
-		var o = new Frapp(frapp, {
-			API : this,
-			window : window
-		}, params, callback);
-		o.uuid = uuid.v4();
-		frapps.push(o);
+		var repo = lib.getRepoData(frapp),
+			manifest = path.join(repo.fullPath, 'package.json'),
+			self = this;
+
+		fs.exists(manifest, function(exists) {
+			if(!exists) return self.install(frapp, params, callback);
+			lib.readJSON(manifest, function(frapp) {
+				new Frapp(frapp, {
+					API : self,
+					window : window
+				}, params, function(frapp) {
+					frapp.uuid = uuid.v4();
+					frapps.push(frapp);
+					callback && callback(frapp);
+				});
+			});
+		});
 	},
 	menu : function() {
 		this.load({
