@@ -58,9 +58,6 @@ Frapp.prototype.onLoad = function() {
 				});
 			});
 		},
-		install : function(frapp, params, callback) {
-			self.BACKEND.API.install(frapp, params, callback);
-		},
 		installed : function(callback) {
 			self.BACKEND.API.installed(callback);
 		},
@@ -141,6 +138,12 @@ Frapp.prototype.onLoad = function() {
 		unlink : function(filePath, callback) {
 			filePath = path.join(config.frappsPath, filePath);
 			lib.checkPath(filePath) && fs.unlink(filePath, callback);
+		},
+		update : function(frapp, callback) {
+			var repo = lib.getRepoData(frapp);
+			rmdir(repo.fullPath, function() {;
+				self.BACKEND.API.install(frapp, null, callback, true);
+			});
 		},
 		version : (function() {
 			return {

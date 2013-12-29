@@ -32,7 +32,7 @@ BACKEND = {
 		if(!menu) return this.menu();
 		Window.get().close(); 
 	},
-	install : function(frapp, params, callback) {
+	install : function(frapp, params, callback, justInstall) {
 		var repo = lib.getRepoData(frapp),
 			self = this,
 			installer,
@@ -43,10 +43,13 @@ BACKEND = {
 					}).on('zip', function(zipUrl) {
 						installer && installer.WIN.window.$('small.url').text(zipUrl);
 					}).on('end', function() {
-						self.load(frapp, params, function(frapp) {
-							installer && installer.WIN.close();
-							callback && callback(frapp);
-						});
+						var cb = function(frapp) {
+								installer && installer.WIN.close();
+								callback && callback(frapp);
+							};
+
+						if(justInstall) return cb(frapp);
+						self.load(frapp, params, cb);
 					});
 				});
 			};
@@ -57,7 +60,7 @@ BACKEND = {
 				type : 'git',
 				url : config.installerRepo
 			}
-		}, { repo : repo }, function(frapp) {
+		}, { install : repo }, function(frapp) {
 			installer = frapp;
 			install();
 		});
