@@ -110,6 +110,7 @@ BACKEND = {
 	},
 	installed : function(callback) {
 		fs.readdir(config.frappsPath, function(err, authors) {
+			if(err) return callback([]);
 			var frapps = [],
 				authorsCount = 0,
 				authorsCb = function() {
