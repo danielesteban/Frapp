@@ -89,8 +89,8 @@ Frapp.prototype.onLoad = function() {
 		menu : function() {
 			self.BACKEND.API.menu();
 		},
-		mkdir : function(dirPath, callback) {
-			dirPath = path.join(config.frappsPath, dirPath);
+		mkdir : function(dirPath, dirName, callback) {
+			dirPath = path.join(config.frappsPath, dirPath || '.', dirName);
 			lib.checkPath(dirPath) && mkdirp(dirPath, callback);
 		},
 		rmdir : function(dirPath, callback) {
