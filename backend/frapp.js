@@ -15,7 +15,7 @@ function Frapp(frapp, backend, params, callback) {
 	this.PARAMS = params;
 	this.CALLBACK = callback;
 	fs.exists(manifest, function(exists) {
-		if(!exists) return backend.API.install(frapp, params);
+		if(!exists) return backend.API.install(frapp, params, callback);
 		lib.readJSON(manifest, function(frapp) {
 			var Window = backend.window.nwDispatcher.requireNwGui().Window;
 			self.FRAPP = frapp;
@@ -64,6 +64,9 @@ Frapp.prototype.onLoad = function() {
 				});
 			});
 		},
+		install : function(frapp, params, callback) {
+			self.BACKEND.API.install(frapp, params, callback);
+		},
 		installed : function(callback) {
 			self.BACKEND.API.installed(callback);
 		},
@@ -103,9 +106,9 @@ Frapp.prototype.onLoad = function() {
 			dirPath = path.join(config.frappsPath, dirPath);
 			lib.checkPath(dirPath) && rmdir(dirPath, callback);
 		},
-		load : function(frapp, params, closeCaller) {
+		load : function(frapp, params, closeCaller, callback) {
 			closeCaller && this.close();
-			self.BACKEND.API.load(frapp, params);
+			self.BACKEND.API.load(frapp, params, callback);
 		},
 		readFile : function(filePath, callback) {
 			filePath = path.join(config.frappsPath, filePath);

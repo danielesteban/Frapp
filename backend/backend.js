@@ -32,7 +32,7 @@ BACKEND = {
 		if(!menu) return this.menu();
 		Window.get().close(); 
 	},
-	install : function(frapp, params) {
+	install : function(frapp, params, callback) {
 		var repo = lib.getRepoData(frapp),
 			self = this,
 			installer,
@@ -45,12 +45,14 @@ BACKEND = {
 					}).on('end', function() {
 						self.load(frapp, params, function() {
 							installer && installer.WIN.close();
+							callback && callback();
 						});
 					});
 				});
 			};
 
-		if(frapp.repository.url !== config.installerRepo) return this.load({
+		if(frapp.repository.url === config.installerRepo) return install();
+		this.load({
 			repository : {
 				type : 'git',
 				url : config.installerRepo
@@ -59,7 +61,6 @@ BACKEND = {
 			installer = frapp;
 			install();
 		});
-		install();
 	},
 	installed : function(callback) {
 		fs.readdir(config.frappsPath, function(err, authors) {
