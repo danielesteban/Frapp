@@ -1,7 +1,6 @@
 var config = require('./config'),
 	dir = require('node-dir'),
 	fs = require('fs'),
-	ghdownload = require('github-download'),
 	less = require('less'),
 	mkdirp = require('mkdirp'),
 	path = require('path');
@@ -94,15 +93,6 @@ lib.prototype.getRepoData = function(frapp) {
 		path : frappPath,
 		fullPath : path.join(config.frappsPath, frappPath)
 	};
-};
-
-lib.prototype.installApp = function(frapp, callback) {
-	var repo = this.getRepoData(frapp);
-	mkdirp(repo.fullPath, function() {
-		ghdownload(frapp.repository.url, repo.fullPath).on('error', function(err) {
-			throw err;
-		}).on('end', callback);
-	});
 };
 
 lib.prototype.createFrapp = function(session, params, callback) {

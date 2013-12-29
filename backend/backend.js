@@ -1,8 +1,10 @@
 var config = require('./config'),
 	Frapp = require('./frapp'),
 	fs = require('fs'),
+	ghdownload = require('github-download'),
 	github = require('node-github'),
 	lib = require('./lib'),
+	mkdirp = require('mkdirp'),
 	path = require('path'),
 	Storage = require('./storage'),
 	uuid = require('node-uuid'),
@@ -31,9 +33,33 @@ BACKEND = {
 		Window.get().close(); 
 	},
 	install : function(frapp, params) {
-		lib.installApp(frapp, function() {
-			BACKEND.load(frapp, params);
+		var repo = lib.getRepoData(frapp),
+			self = this,
+			installer,
+			install = function() {
+				mkdirp(repo.fullPath, function() {
+					ghdownload(frapp.repository.url, repo.fullPath).on('error', function(err) {
+						throw err;
+					}).on('zip', function(zipUrl) {
+						installer && installer.WIN.window.$('small.url').text(zipUrl);
+					}).on('end', function() {
+						self.load(frapp, params, function() {
+							installer && installer.WIN.close();
+						});
+					});
+				});
+			};
+
+		if(frapp.repository.url !== config.installerRepo) return this.load({
+			repository : {
+				type : 'git',
+				url : config.installerRepo
+			}
+		}, { repo : repo }, function(frapp) {
+			installer = frapp;
+			install();
 		});
+		install();
 	},
 	installed : function(callback) {
 		fs.readdir(config.frappsPath, function(err, authors) {
@@ -87,19 +113,19 @@ BACKEND = {
 			});
 		});
 	},
-	load : function(frapp, params) {
+	load : function(frapp, params, callback) {
 		var o = new Frapp(frapp, {
 			API : this,
 			window : window
-		}, params);
+		}, params, callback);
 		o.uuid = uuid.v4();
 		frapps.push(o);
 	},
 	menu : function() {
 		this.load({
-			"repository" : {
-				"type" : "git",
-				"url" : config.menuRepo
+			repository : {
+				type : 'git',
+				url : config.menuRepo
 			}
 		});
 	},
@@ -115,9 +141,9 @@ BACKEND = {
 		else auth = authStorage.get('auth');
 		if(!auth || auth.username === '' || auth.password === '') {
 			!fromSignin && this.load({
-				"repository" : {
-					"type" : "git",
-					"url" : config.signinRepo
+				repository : {
+					type : 'git',
+					url : config.signinRepo
 				}
 			});
 			callback && callback(false);
@@ -197,4 +223,3 @@ BACKEND = {
 
 	httpServer.listen(BACKEND.httpPort, 'localhost');
 })();
-

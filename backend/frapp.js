@@ -4,14 +4,16 @@ var config = require('./config'),
 	less = new (require('less')).Parser,
 	mkdirp = require('mkdirp'),
 	path = require('path'),
+	rmdir = require('rmdir'),
 	Storage = require('./storage');
 
-function Frapp(frapp, backend, params) {
+function Frapp(frapp, backend, params, callback) {
 	var repo = lib.getRepoData(frapp),
 		manifest = path.join(repo.fullPath, 'package.json'),
 		self = this;
 
 	this.PARAMS = params;
+	this.CALLBACK = callback;
 	fs.exists(manifest, function(exists) {
 		if(!exists) return backend.API.install(frapp, params);
 		lib.readJSON(manifest, function(frapp) {
@@ -93,9 +95,14 @@ Frapp.prototype.onLoad = function() {
 		menu : function() {
 			self.BACKEND.API.menu();
 		},
-		/*mkdir : function(dirPath, callback) {
+		mkdir : function(dirPath, callback) {
+			dirPath = path.join(config.frappsPath, dirPath);
 			lib.checkPath(dirPath) && mkdirp(dirPath, callback);
-		},*/
+		},
+		rmdir : function(dirPath, callback) {
+			dirPath = path.join(config.frappsPath, dirPath);
+			lib.checkPath(dirPath) && rmdir(dirPath, callback);
+		},
 		load : function(frapp, params, closeCaller) {
 			closeCaller && this.close();
 			self.BACKEND.API.load(frapp, params);
@@ -132,6 +139,10 @@ Frapp.prototype.onLoad = function() {
 		storage : (function() {
 			return self.STORAGE;
 		})(),
+		unlink : function(filePath, callback) {
+			filePath = path.join(config.frappsPath, filePath);
+			lib.checkPath(filePath) && fs.unlink(filePath, callback);
+		},
 		version : (function() {
 			return {
 				engine : self.BACKEND.API.version,
@@ -220,6 +231,10 @@ Frapp.prototype.onLoad = function() {
 			self.BACKEND.API.session && (params.session = self.BACKEND.API.session.user);
 			lib.emitEvent(self, 'frapp.init', params);
 			self.WIN.show();
+			if(self.CALLBACK) {
+				self.CALLBACK(self);
+				delete self.CALLBACK;
+			}
 		};
 
 	loadModules();

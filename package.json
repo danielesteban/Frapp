@@ -9,7 +9,8 @@
 		"mkdirp" : "latest",
 		"node-dir" : "latest",
 		"node-static" : "latest",
-		"node-uuid" : "latest"
+		"node-uuid" : "latest",
+		"rmdir" : "latest"
 	},
 	"window" : {
 		"show" : false
