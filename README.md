@@ -15,7 +15,7 @@ More to come...
 
 **Ecosystem**
  - [FrappDocs](https://github.com/danielesteban/FrappDocs): A documentation viewer.
- - [FrappEditor](https://github.com/danielesteban/FrappDocs): A code editor (with auto-reload).
+ - [FrappEditor](https://github.com/danielesteban/FrappEditor): A code editor (with auto-reload).
  - [FrappHelloWorld](https://github.com/danielesteban/FrappHelloWorld): A hello-world Frapp. Just the basic template.
  - [FrappInstaller](https://github.com/danielesteban/FrappInstaller): Frapp Installer/Updater UI
  - [FrappSignin](https://github.com/danielesteban/FrappSignin): Sign-In to Github UI
