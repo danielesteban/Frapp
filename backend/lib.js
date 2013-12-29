@@ -55,7 +55,9 @@ lib.prototype.compileLess = function(frapp, callback) {
 	var window = frapp.WIN.window,
 		repo = this.getRepoData(frapp.FRAPP),
 		lessPath = path.join(repo.fullPath, 'css', 'screen.less'),
-		parser = new(less.Parser);
+		parser = new(less.Parser)({
+			paths: [path.join(repo.fullPath, 'css')]
+		});
 
 	fs.readFile(lessPath, {
 		encoding : 'utf-8'

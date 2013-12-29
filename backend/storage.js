@@ -16,4 +16,10 @@ Storage.prototype.remove = function(id) {
 	this.db.removeItem(this.namespace + ':' + id);
 };
 
+Storage.prototype.clear = function() {
+	for(var i in this.db) {
+		i.indexOf(this.namespace + ':') === 0 && this.db.removeItem(i);
+	}
+};
+
 module.exports = Storage;
