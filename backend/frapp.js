@@ -101,8 +101,10 @@ Frapp.prototype.onLoad = function() {
 			lib.checkPath(dirPath) && rmdir(dirPath, callback);
 		},
 		load : function(frapp, params, closeCaller, callback) {
-			closeCaller && this.close();
-			self.BACKEND.API.load(frapp, params, callback);
+			self.BACKEND.API.load(frapp, params, function(frapp) {
+				closeCaller && self.WIN.close();
+				callback && callback(frapp);
+			});
 		},
 		readFile : function(filePath, callback) {
 			filePath = path.join(config.frappsPath, filePath);
