@@ -27,11 +27,11 @@ lib.prototype.compileTemplates = function(frapp, callback) {
 		repo = this.getRepoData(frapp.FRAPP),
 		templatesPath = path.join(repo.fullPath, 'templates'),
 		compile = function(id, templatesPath, callback) {
-			var html;
-			window.Handlebars[id] = html = {};
+			var html = window.Handlebars[id] = {};
 			dir.readFiles(templatesPath, {
 				match : /\.handlebars$/,
-				exclude : /^\./
+				exclude : /^\./,
+				recursive  : false
 			}, function(err, contents, id, next) {
 				id = path.basename(id, '.handlebars');
 				!html[id] && (html[id] = '');
