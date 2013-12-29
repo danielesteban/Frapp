@@ -32,6 +32,49 @@ BACKEND = {
 		if(!menu) return this.menu();
 		Window.get().close(); 
 	},
+	checkForUpdates : function() {
+		var self = this;
+		this.installed(function(frapps) {
+			var updates = [],
+				check = function() {
+					if(!frapps.length) return cb();
+					var frapp = frapps.shift(),
+						repo = lib.getRepoData(frapp);
+
+					require('https').get('https://raw.github.com/' + repo.author + '/' + repo.name + '/master/package.json', function(res) {
+						var manifest = '';
+						res.setEncoding('utf8');
+						res.on('data', function(chunk) {
+							manifest += chunk;
+						});
+						res.on('end', function() {
+							try {
+								manifest = JSON.parse(manifest);
+							} catch(e) {
+								return check();
+							}
+							if(manifest.version !== frapp.version) {
+								manifest.path = frapp.path;
+								frapp.icon && (manifest.icon = frapp.icon);
+								updates.push(manifest);
+							}
+							check();
+						});
+					});
+				},
+				cb = function() {
+					if(!updates.length) return;
+					self.load({
+						repository : {
+							type : 'git',
+							url : config.installerRepo
+						}
+					}, { updates : updates });
+				};
+
+			check();
+		});
+	},
 	install : function(frapp, params, callback, justInstall) {
 		var repo = lib.getRepoData(frapp),
 			self = this,
@@ -233,6 +276,7 @@ BACKEND = {
 
 	httpServer.on('listening', function() {
 		BACKEND.signin(false, null, true);
+		BACKEND.checkForUpdates();
 		BACKEND.menu();
 	});
 
