@@ -166,6 +166,12 @@ Frapp.prototype.onLoad = function() {
 			self.reload();
 		}
 	}));
+	if(this.FRAPP.repository.type !== 'git' || this.FRAPP.repository.url !== config.menuRepo) menu.append(new gui.MenuItem({
+		label : 'Frapps Menu',
+		click : function() {
+			self.BACKEND.API.menu();
+		}
+	}));
 	menu.append(new gui.MenuItem({
 		label : 'Show DevTools',
 		click : function() {

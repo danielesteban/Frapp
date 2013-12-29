@@ -181,6 +181,11 @@ BACKEND = {
 		});
 	},
 	menu : function() {
+		var already;
+		frapps.forEach(function(f, i) {
+			f.FRAPP.repository.type === 'git' && f.FRAPP.repository.url === config.menuRepo && (already = f);
+		});
+		if(already) return already.WIN.show();
 		this.load({
 			repository : {
 				type : 'git',
