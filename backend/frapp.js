@@ -53,7 +53,7 @@ Frapp.prototype.onLoad = function() {
 		},
 		removeSource : function(url, callback) {
 			var file = path.join(config.sourcesPath, url.substr(url.lastIndexOf('/') + 1));
-			lib.checkPath(file, config.sourcesPath) && console.log(file)//fs.unlink(file, callback);
+			lib.checkPath(file, config.sourcesPath) && fs.unlink(file, callback);
 		},
 		close : function() {
 			self.WIN.close();
