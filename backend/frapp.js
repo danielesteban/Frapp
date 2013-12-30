@@ -134,8 +134,8 @@ Frapp.prototype.onLoad = function() {
 				callback && callback(frapp);
 			});
 		},
-		readFile : function(filePath, callback) {
-			filePath = path.join(config.frappsPath, filePath);
+		readFile : function(filePath, fileName, callback) {
+			filePath = path.join(config.frappsPath, filePath || '.', fileName);
 			lib.checkPath(filePath) && fs.readFile(filePath, {
 				encoding : 'utf-8'
 			}, function(err, contents) {
@@ -145,7 +145,8 @@ Frapp.prototype.onLoad = function() {
 		reload : function() {
 			self.reload();
 		},
-		saveFile : function(filePath, data, callback) {
+		saveFile : function(filePath, fileName, data, callback) {
+			filePath = path.join(filePath || '.', fileName);
 			var fullPath = path.join(config.frappsPath, filePath);
 			lib.checkPath(fullPath) && fs.writeFile(fullPath, data, function(err) {
 				self.BACKEND.API.update(filePath, self, callback);
@@ -166,8 +167,8 @@ Frapp.prototype.onLoad = function() {
 		storage : (function() {
 			return self.STORAGE;
 		})(),
-		unlink : function(filePath, callback) {
-			filePath = path.join(config.frappsPath, filePath);
+		unlink : function(filePath, fileName, callback) {
+			filePath = path.join(config.frappsPath, filePath, fileName);
 			lib.checkPath(filePath) && fs.unlink(filePath, callback);
 		},
 		update : function(frapp, callback) {
