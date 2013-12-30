@@ -75,7 +75,7 @@ BACKEND = {
 					}, { updates : updates });
 
 					/* Update Source Lists */
-					self.getSources(function(sourceList, next) {
+					self.getSources(function(sourceList, filename, next) {
 						lib.getJSON(sourceList.url, function(manifest, raw) {
 							if(!manifest || versionCompare(manifest.version, sourceList.version) <= 0) return next();
 							fs.writeFile(filename, raw, next);
@@ -98,7 +98,7 @@ BACKEND = {
 			} catch(err) {
 				return next();
 			}
-			if(oneAtATime) return callback(sourceList, next);
+			if(oneAtATime) return callback(sourceList, filename, next);
 			sources.push(sourceList);
 			next();
 		}, function() {
