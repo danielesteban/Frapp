@@ -1,0 +1,47 @@
+{
+	"name" : "Frapps",
+	"version" : "0.0.1",
+	"description" : "The official Frapps Source List. Pull-Requests are welcome ;P",
+	"mantainer" : "Daniel Esteban Nombela <dani@hellacoders.com>",
+	"url" : "https://raw.github.com/danielesteban/Frapp/master/backend/sources/Frapps.json",
+	"frapps" : [
+		{
+			"name" : "FrappDocs",
+			"version" : "0.0.1",
+			"description" : "A documentation viewer.",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/danielesteban/FrappDocs.git"
+			}
+		},
+		{
+			"name" : "FrappEditor",
+			"version" : "0.0.1",
+			"description" : "A code editor (with auto-reload).",
+			"icon" : "img/icon.png",
+			"repository" : {
+				"type" : "git",
+				"url" : "https://github.com/danielesteban/FrappEditor.git"
+			}
+		},
+		{
+			"name" : "FrappFB",
+			"version" : "1.0.0",
+			"description" : "A minimalistic ad-free facebook client.",
+			"repository" : {
+				"type" : "git",
+				"url" : "https://github.com/danielesteban/FrappFB.git"
+			}
+		},
+		{
+			"name" : "FrappHelloWorld",
+			"version" : "0.0.1",
+			"description" : "A hello-world Frapp. Just the basic template.",
+			"icon" : "icon.png",
+			"repository" : {
+				"type" : "git",
+				"url" : "https://github.com/danielesteban/FrappHelloWorld.git"
+			}
+		}
+	]
+}

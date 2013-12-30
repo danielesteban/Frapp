@@ -38,12 +38,40 @@ Frapp.prototype.onLoad = function() {
 		window = this.WIN.window;
 
 	window.FRAPP = {
+		addSource : function(url, callback) {
+			var file = path.join(config.sourcesPath, url.substr(url.lastIndexOf('/') + 1)),
+				p = file.lastIndexOf('.json');
+
+			if(p === -1) return callback(false);
+			file = file.substr(0, p) + '.json'; //ensure extension
+			lib.getJSON(url, function(manifest, raw) {
+				if(!manifest || !manifest.version || !manifest.url || !manifest.frapps || !lib.checkPath(file, config.sourcesPath)) return callback(false);
+				fs.writeFile(file, raw, function() {
+					callback(manifest);
+				});
+			});
+		},
+		removeSource : function(url, callback) {
+			var file = path.join(config.sourcesPath, url.substr(url.lastIndexOf('/') + 1));
+			lib.checkPath(file, config.sourcesPath) && console.log(file)//fs.unlink(file, callback);
+		},
 		close : function() {
 			self.WIN.close();
 		},
 		create : function(params, callback) {
 			if(!self.BACKEND.API.session) return;
 			lib.createFrapp(self.BACKEND.API.session, params, callback);
+		},
+		contextmenu : function(e, items) {
+			var gui = self.BACKEND.window.nwDispatcher.requireNwGui(),
+				menu = new gui.Menu();
+
+			e.stopPropagation();
+			e.preventDefault();
+			items.forEach(function(item) {
+				menu.append(new gui.MenuItem(item));
+			});
+			menu.popup(e.clientX + self.WIN.x - 300, e.clientY + self.WIN.y - 200);
 		},
 		edit : function(frapp) {
 			var repo = lib.getRepoData(frapp);
@@ -57,6 +85,9 @@ Frapp.prototype.onLoad = function() {
 					path : repo.path
 				});
 			});
+		},
+		getSources : function(callback) {
+			self.BACKEND.API.getSources(callback);
 		},
 		installed : function(callback) {
 			self.BACKEND.API.installed(callback);
@@ -157,36 +188,35 @@ Frapp.prototype.onLoad = function() {
 		e.metaKey && e.altKey && e.keyCode === 74 && this.FRAPP.showDevTools();
 	});
 	
-	var gui = this.BACKEND.window.nwDispatcher.requireNwGui(),
-		menu = new gui.Menu();
+	window.addEventListener('contextmenu', function(e) {
+		var items = [
+				{
+					label : 'Reload',
+					click : function() {
+						self.reload();
+					}
+				},
+				{
+					label : 'Show DevTools',
+					click : function() {
+						self.WIN.showDevTools();
+					}
+				},
+				{
+					label : 'Edit ' + self.FRAPP.name + '\'s Source Code',
+					click : function() {
+						window.FRAPP.edit(self.FRAPP);
+					}
+				}
+			];
 
-	menu.append(new gui.MenuItem({
-		label : 'Reload',
-		click : function() {
-			self.reload();
-		}
-	}));
-	if(this.FRAPP.repository.type !== 'git' || this.FRAPP.repository.url !== config.menuRepo) menu.append(new gui.MenuItem({
-		label : 'Frapps Menu',
-		click : function() {
-			self.BACKEND.API.menu();
-		}
-	}));
-	menu.append(new gui.MenuItem({
-		label : 'Show DevTools',
-		click : function() {
-			self.WIN.showDevTools();
-		}
-	}));
-	menu.append(new gui.MenuItem({
-		label : 'Edit ' + self.FRAPP.name + '\'s Source Code',
-		click : function() {
-			window.FRAPP.edit(self.FRAPP);
-		}
-	}));
-	window.addEventListener('contextmenu', function(e) { 
-		e.preventDefault();
-		menu.popup(e.x + self.WIN.x - 300, e.y + self.WIN.y - 200);
+		if(self.FRAPP.repository.type !== 'git' || self.FRAPP.repository.url !== config.menuRepo) items.splice(1, 0, {
+			label : 'Frapps Menu',
+			click : function() {
+				self.BACKEND.API.menu();
+			}
+		});
+		window.FRAPP.contextmenu(e, items);
 	});
 
 	/* Frapp Modules */

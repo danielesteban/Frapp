@@ -1,4 +1,5 @@
 var config = require('./config'),
+	dir = require('node-dir'),
 	Frapp = require('./frapp'),
 	fs = require('fs'),
 	ghdownload = require('github-download'),
@@ -36,43 +37,72 @@ BACKEND = {
 		var self = this;
 		this.installed(function(frapps) {
 			var updates = [],
+				versionCompare = function(left, right) {
+					if(typeof left + typeof right !== 'stringstring') return false;
+
+					var a = left.split('.'),
+						b = right.split('.'),
+						i = 0, len = Math.max(a.length, b.length);
+
+					for(; i < len; i++) {
+						if((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) return 1;
+						else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) return -1;
+					}
+
+					return 0;
+				},
 				check = function() {
 					if(!frapps.length) return cb();
 					var frapp = frapps.shift(),
 						repo = lib.getRepoData(frapp);
 
-					require('https').get('https://raw.github.com/' + repo.author + '/' + repo.name + '/master/package.json', function(res) {
-						var manifest = '';
-						res.setEncoding('utf8');
-						res.on('data', function(chunk) {
-							manifest += chunk;
-						});
-						res.on('end', function() {
-							try {
-								manifest = JSON.parse(manifest);
-							} catch(e) {
-								return check();
-							}
-							if(manifest.version !== frapp.version) {
-								manifest.path = frapp.path;
-								frapp.icon && (manifest.icon = frapp.icon);
-								updates.push(manifest);
-							}
-							check();
-						});
+					lib.getJSON('https://raw.github.com/' + repo.author + '/' + repo.name + '/master/package.json', function(manifest) {
+						if(!manifest || versionCompare(manifest.version, frapp.version) <= 0) return check();
+						manifest.path = frapp.path;
+						manifest.currentVersion = frapp.version;
+						delete manifest.icon;
+						frapp.icon && (manifest.icon = frapp.icon);
+						updates.push(manifest);
+						check();
 					});
 				},
 				cb = function() {
-					if(!updates.length) return;
-					self.load({
+					if(updates.length) self.load({
 						repository : {
 							type : 'git',
 							url : config.installerRepo
 						}
 					}, { updates : updates });
+
+					/* Update Source Lists */
+					self.getSources(function(sourceList, next) {
+						lib.getJSON(sourceList.url, function(manifest, raw) {
+							if(!manifest || versionCompare(manifest.version, sourceList.version) <= 0) return next();
+							fs.writeFile(filename, raw, next);
+						});
+					}, true);
 				};
 
 			check();
+		});
+	},
+	getSources : function(callback, oneAtATime) {
+		var sources = [];
+		dir.readFiles(config.sourcesPath, {
+			match : /\.json$/,
+			exclude : /^\./,
+			recursive  : false
+		}, function(err, sourceList, filename, next) {
+			try {
+				sourceList = JSON.parse(sourceList);
+			} catch(err) {
+				return next();
+			}
+			if(oneAtATime) return callback(sourceList, next);
+			sources.push(sourceList);
+			next();
+		}, function() {
+			!oneAtATime && callback(sources);
 		});
 	},
 	install : function(frapp, params, callback, justInstall) {

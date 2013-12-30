@@ -18,8 +18,28 @@ lib.prototype.readJSON = function(file, callback) {
 	});
 };
 
-lib.prototype.checkPath = function(p) {
-	return path.normalize(p).indexOf(config.frappsPath) === 0;
+lib.prototype.getJSON = function(url, callback) {
+	require('https').get(url, function(res) {
+		var raw = '';
+		res.setEncoding('utf8');
+		res.on('data', function(chunk) {
+			raw += chunk;
+		});
+		res.on('end', function() {
+			var json;
+			try {
+				json = JSON.parse(raw);
+			} catch(e) {
+				return callback(false, raw);
+			}
+			callback(json, raw);
+		});
+	});
+};
+
+lib.prototype.checkPath = function(p, root) {
+	root = root || config.frappsPath;
+	return path.normalize(p).indexOf(root) === 0;
 };
 
 lib.prototype.compileTemplates = function(frapp, callback) {
@@ -27,23 +47,15 @@ lib.prototype.compileTemplates = function(frapp, callback) {
 		repo = this.getRepoData(frapp.FRAPP),
 		templatesPath = path.join(repo.fullPath, 'templates'),
 		compile = function(id, templatesPath, callback) {
-			var html = window.Handlebars[id] = {};
+			var templates = window.Handlebars[id] = {};
 			dir.readFiles(templatesPath, {
 				match : /\.handlebars$/,
 				exclude : /^\./,
 				recursive  : false
-			}, function(err, contents, id, next) {
-				id = path.basename(id, '.handlebars');
-				!html[id] && (html[id] = '');
-				html[id] += contents;
+			}, function(err, contents, filename, next) {
+				templates[path.basename(filename, '.handlebars')] = window.Handlebars.compile(contents);
 				next();
-			}, function(err, files) {
-				!err && files.forEach(function(id) {
-					id = path.basename(id, '.handlebars');
-					html[id] = window.Handlebars.compile(html[id]);
-				});
-				callback();
-			});
+			}, callback);
 		};
 	
 	compile('templates', templatesPath, function() {
@@ -87,7 +99,8 @@ lib.prototype.getRepoData = function(frapp) {
 		author = repository.substr(0, p);
 	
 	repository = repository.substr(p + 1);
-	var name = repository.substr(0, repository.indexOf('.git')),
+	p = repository.lastIndexOf('.git');
+	var name = repository.substr(0, p !== -1 ? p : repository.length),
 		frappPath = path.join(author, name);
 	
 	return {
