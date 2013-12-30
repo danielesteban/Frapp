@@ -28,6 +28,7 @@
 			"name" : "FrappFB",
 			"version" : "1.0.0",
 			"description" : "A minimalistic ad-free facebook client.",
+			"icon" : "img/icon.png",
 			"repository" : {
 				"type" : "git",
 				"url" : "https://github.com/danielesteban/FrappFB.git"
