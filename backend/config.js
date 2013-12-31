@@ -1,5 +1,6 @@
 var path = require('path'),
 	config = {
+		boilerplateRepo : 'https://github.com/danielesteban/FrappBoilerplate.git',
 		installerRepo : 'https://github.com/danielesteban/FrappInstaller.git',
 		menuRepo : 'https://github.com/danielesteban/FrappsMenu.git',
 		signinRepo : 'https://github.com/danielesteban/FrappSignin.git',

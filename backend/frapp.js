@@ -222,19 +222,19 @@ Frapp.prototype.onLoad = function() {
 
 	/* Frapp Modules */
 	var modules = (this.FRAPP.modules || []).slice(),
+		head = window.document.head,
+		firstChild = head.firstChild,
 		loadModules = function() {
 			if(!modules.length) return init();
 			var module = modules.shift(),
 				modulePath = path.join(config.modulesPath, module),
 				manifest = path.join(modulePath, 'module.json');
 
-			if(module === 'less') return lib.compileLess(self, loadModules);
+			if(module === 'less') return lib.compileLess(self, firstChild, loadModules);
 			fs.exists(manifest, function(exists) {
 				if(!exists) return loadModules();
 				lib.readJSON(manifest, function(module) {
-					var head = window.document.head,
-						firstChild = head.firstChild,
-						modCSS = (module.css || []),
+					var modCSS = (module.css || []),
 						modJS = (module.js || []),
 						modFiles = modCSS.length + modJS.length,
 						count = 0,

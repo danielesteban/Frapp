@@ -1,6 +1,7 @@
 var config = require('./config'),
 	dir = require('node-dir'),
 	fs = require('fs'),
+	ghdownload = require('github-download'),
 	less = require('less'),
 	mkdirp = require('mkdirp'),
 	path = require('path');
@@ -63,7 +64,7 @@ lib.prototype.compileTemplates = function(frapp, callback) {
 	});
 };
 
-lib.prototype.compileLess = function(frapp, callback) {
+lib.prototype.compileLess = function(frapp, insertBefore, callback) {
 	var window = frapp.WIN.window,
 		repo = this.getRepoData(frapp.FRAPP),
 		lessPath = path.join(repo.fullPath, 'css', 'screen.less'),
@@ -78,7 +79,7 @@ lib.prototype.compileLess = function(frapp, callback) {
 		parser.parse(css, function (err, tree) {
 			var style = window.document.createElement('style');
 			style.appendChild(window.document.createTextNode(tree.toCSS({compress : true})));
-			window.document.head.insertBefore(style, window.document.head.firstChild);
+			insertBefore.parentNode.insertBefore(style, insertBefore);
 		    callback();
 		});
 	});
@@ -112,28 +113,28 @@ lib.prototype.getRepoData = function(frapp) {
 };
 
 lib.prototype.createFrapp = function(session, params, callback) {
-	var self = this;
-	session.API.repos.create(params, function(err, repository) {
-		if(err) throw err;
-		var frapp = {
-				name : params.name,
-				version : '0.0.1',
-				author : session.user.name + '<' + session.user.email + '>',
-				repository : {
-					type : 'git',
-					url : repository.clone_url
-				},
-				main : 'index.html'
-			};
+	var repoPath = path.join(config.frappsPath, session.user.login, params.name),
+		self = this;
 
-		var repo = self.getRepoData(frapp);
-		mkdirp(repo.fullPath, function() {
-			fs.writeFile(path.join(repo.fullPath, 'package.json'), JSON.stringify(frapp, null, 4), function() {
-				fs.writeFile(path.join(repo.fullPath, '.gitignore'), '.DS_Store\n._*', function() {
-					//TODO: Copy (or clone or fork) Frapp Boilerplate
-					fs.writeFile(path.join(repo.fullPath, 'index.html'), '<html>\n\t<head>\n\t</head>\n\t<body>Hello World!\n\t</body>\n</html>', function() {
-						//TODO: Init git repo, generate initial commit & push it.
+	params.name = params.name.replace(/\//g, '').replace(/\\/g, '');
+	fs.exists(repoPath, function(exists) {
+		if(exists) return;
+		self.checkPath(repoPath) && mkdirp(repoPath, function() {
+			ghdownload(config.boilerplateRepo, repoPath).on('end', function() {
+				self.readJSON(path.join(repoPath, 'package.json'), function(frapp) {
+					frapp.name = params.name;
+					frapp.version = '0.0.1';
+					frapp.author = session.user.name + '<' + session.user.email + '>';
+					frapp.repository = {
+						type : 'git',
+						url : 'https://github.com/' + session.user.login + '/' + params.name + '.git'
+					};
+					fs.writeFile(path.join(repoPath, 'package.json'), JSON.stringify(frapp, null, '\t'), function() {
 						callback(frapp);
+						//TODO: Create github repo, generate initial commit & push it.
+						/*session.API.repos.create(params, function(err, repository) {
+						
+						});*/
 					});
 				});
 			});

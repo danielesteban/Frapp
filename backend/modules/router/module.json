@@ -1,0 +1,6 @@
+{
+	"name" : "router",
+	"js" : [
+		"router.js"
+	]
+}
