@@ -124,6 +124,7 @@ lib.prototype.createFrapp = function(session, params, callback) {
 				self.readJSON(path.join(repoPath, 'package.json'), function(frapp) {
 					frapp.name = params.name;
 					frapp.version = '0.0.1';
+					frapp.description = session.user.login + '\'s brand new Frapp';
 					frapp.author = session.user.name + '<' + session.user.email + '>';
 					frapp.repository = {
 						type : 'git',
