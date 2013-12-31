@@ -71,7 +71,7 @@ Frapp.prototype.onLoad = function() {
 			items.forEach(function(item) {
 				menu.append(new gui.MenuItem(item));
 			});
-			menu.popup(e.clientX + self.WIN.x - 300, e.clientY + self.WIN.y - 200);
+			menu.popup(e.clientX + self.WIN.x - 300, e.clientY + self.WIN.y - 190);
 		},
 		edit : function(frapp) {
 			var repo = lib.getRepoData(frapp);
@@ -121,7 +121,7 @@ Frapp.prototype.onLoad = function() {
 			self.BACKEND.API.menu();
 		},
 		mkdir : function(dirPath, dirName, callback) {
-			dirPath = path.join(config.frappsPath, dirPath || '.', dirName);
+			dirPath = path.join(config.frappsPath, dirPath || '.', path.basename(dirName));
 			lib.checkPath(dirPath) && mkdirp(dirPath, callback);
 		},
 		rmdir : function(dirPath, callback) {
@@ -135,7 +135,7 @@ Frapp.prototype.onLoad = function() {
 			});
 		},
 		readFile : function(filePath, fileName, callback) {
-			filePath = path.join(config.frappsPath, filePath || '.', fileName);
+			filePath = path.join(config.frappsPath, filePath || '.', path.basename(fileName));
 			lib.checkPath(filePath) && fs.readFile(filePath, {
 				encoding : 'utf-8'
 			}, function(err, contents) {
@@ -145,8 +145,13 @@ Frapp.prototype.onLoad = function() {
 		reload : function() {
 			self.reload();
 		},
+		rename : function(filePath, fileName, newFileName, callback) {
+			var newFilePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(newFileName)));
+			filePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(fileName || '.')));
+			lib.checkPath(filePath) && lib.checkPath(newFilePath) && fs.rename(filePath, newFilePath, callback);
+		},
 		saveFile : function(filePath, fileName, data, callback) {
-			filePath = path.join(filePath || '.', fileName);
+			filePath = path.join(filePath || '.', path.basename(fileName));
 			var fullPath = path.join(config.frappsPath, filePath);
 			lib.checkPath(fullPath) && fs.writeFile(fullPath, data, function(err) {
 				self.BACKEND.API.update(filePath, self, callback);
@@ -168,7 +173,7 @@ Frapp.prototype.onLoad = function() {
 			return self.STORAGE;
 		})(),
 		unlink : function(filePath, fileName, callback) {
-			filePath = path.join(config.frappsPath, filePath, fileName);
+			filePath = path.join(config.frappsPath, filePath, path.basename(fileName));
 			lib.checkPath(filePath) && fs.unlink(filePath, callback);
 		},
 		update : function(frapp, callback) {

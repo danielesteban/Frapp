@@ -113,10 +113,10 @@ lib.prototype.getRepoData = function(frapp) {
 };
 
 lib.prototype.createFrapp = function(session, params, callback) {
+	params.name = path.basename(params.name);
 	var repoPath = path.join(config.frappsPath, session.user.login, params.name),
 		self = this;
 
-	params.name = params.name.replace(/\//g, '').replace(/\\/g, '');
 	fs.exists(repoPath, function(exists) {
 		if(exists) return;
 		self.checkPath(repoPath) && mkdirp(repoPath, function() {
