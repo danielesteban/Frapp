@@ -51,17 +51,6 @@ Frapp.prototype.onLoad = function() {
 				});
 			});
 		},
-		removeSource : function(url, callback) {
-			var file = path.join(config.sourcesPath, url.substr(url.lastIndexOf('/') + 1));
-			lib.checkPath(file, config.sourcesPath) && fs.unlink(file, callback);
-		},
-		close : function() {
-			self.WIN.close();
-		},
-		create : function(params, callback) {
-			if(!self.BACKEND.API.session) return;
-			lib.createFrapp(self.BACKEND.API.session, params, callback);
-		},
 		contextmenu : function(e, items) {
 			var gui = self.BACKEND.window.nwDispatcher.requireNwGui(),
 				menu = new gui.Menu();
@@ -72,6 +61,10 @@ Frapp.prototype.onLoad = function() {
 				menu.append(new gui.MenuItem(item));
 			});
 			menu.popup(e.clientX + self.WIN.x - 300, e.clientY + self.WIN.y - 190);
+		},
+		create : function(params, callback) {
+			if(!self.BACKEND.API.session) return;
+			lib.createFrapp(self.BACKEND.API.session, params, callback);
 		},
 		edit : function(frapp) {
 			var repo = lib.getRepoData(frapp);
@@ -117,22 +110,18 @@ Frapp.prototype.onLoad = function() {
 				});
 			});
 		},
+		load : function(frapp, params, closeCaller, callback) {
+			self.BACKEND.API.load(frapp, params, function(frapp) {
+				closeCaller && self.WIN.close();
+				callback && callback(frapp);
+			});
+		},
 		menu : function() {
 			self.BACKEND.API.menu();
 		},
 		mkdir : function(dirPath, dirName, callback) {
 			dirPath = path.join(config.frappsPath, dirPath || '.', path.basename(dirName));
 			lib.checkPath(dirPath) && mkdirp(dirPath, callback);
-		},
-		rmdir : function(dirPath, callback) {
-			dirPath = path.join(config.frappsPath, dirPath);
-			lib.checkPath(dirPath) && rmdir(dirPath, callback);
-		},
-		load : function(frapp, params, closeCaller, callback) {
-			self.BACKEND.API.load(frapp, params, function(frapp) {
-				closeCaller && self.WIN.close();
-				callback && callback(frapp);
-			});
 		},
 		readFile : function(filePath, fileName, callback) {
 			filePath = path.join(config.frappsPath, filePath || '.', path.basename(fileName));
@@ -145,10 +134,18 @@ Frapp.prototype.onLoad = function() {
 		reload : function() {
 			self.reload();
 		},
+		removeSource : function(url, callback) {
+			var file = path.join(config.sourcesPath, url.substr(url.lastIndexOf('/') + 1));
+			lib.checkPath(file, config.sourcesPath) && fs.unlink(file, callback);
+		},
 		rename : function(filePath, fileName, newFileName, callback) {
 			var newFilePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(newFileName)));
 			filePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(fileName || '.')));
 			lib.checkPath(filePath) && lib.checkPath(newFilePath) && fs.rename(filePath, newFilePath, callback);
+		},
+		rmdir : function(dirPath, callback) {
+			dirPath = path.join(config.frappsPath, dirPath);
+			lib.checkPath(dirPath) && rmdir(dirPath, callback);
 		},
 		saveFile : function(filePath, fileName, data, callback) {
 			filePath = path.join(filePath || '.', path.basename(fileName));
@@ -160,14 +157,14 @@ Frapp.prototype.onLoad = function() {
 		setTitle : function(title) {
 			self.WIN.title = title;
 		},
+		showDevTools : function() {
+			self.WIN.showDevTools();
+		},
 		signin : function(auth, callback) {
 			self.BACKEND.API.signin(auth, callback, auth ? true : false);
 		},
 		signout : function() {
 			self.BACKEND.API.signout();
-		},
-		showDevTools : function() {
-			self.WIN.showDevTools();
 		},
 		storage : (function() {
 			return self.STORAGE;
