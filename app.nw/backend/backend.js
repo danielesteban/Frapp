@@ -108,6 +108,11 @@ BACKEND = {
 								rmdir(enginePath, function() {
 									(new zip(updatePath)).extractAllTo(enginePath);
 									fs.unlink(updatePath);
+									var plistPath = path.join(config.resourcesPath, '..', 'Info.plist');
+									fs.readFile(plistPath, 'utf-8', function(err, plist) {
+										var p = plist.indexOf('<string>', plist.indexOf('<key>CFBundleShortVersionString</key>')) + 8;
+										fs.writeFile(plistPath, plist.substr(0, p) + 'v' + manifest.version + plist.substr(plist.indexOf('</string>', p)));
+									});
 								});
 							});
 						});
