@@ -23,8 +23,8 @@ function Frapp(frapp, backend, params, callback) {
 		focus : true,
 		toolbar : false,
 		show : false,
-		width : frapp.window && frapp.window.width ? frapp.window.width : (window.screen.width * 0.9),
-		height : frapp.window && frapp.window.height ? frapp.window.height : (window.screen.height * 0.9)
+		width : frapp.window && frapp.window.width ? frapp.window.width : Math.round(window.screen.width * 0.9),
+		height : frapp.window && frapp.window.height ? frapp.window.height : Math.round(window.screen.height * 0.9)
 	});
 	this.WIN.on('close', function() {
 		this.close(true);
@@ -187,8 +187,8 @@ Frapp.prototype.onLoad = function() {
 		})()
 	};
 	window.addEventListener('keydown', function(e) {
-		e.metaKey && e.keyCode === 82 && self.reload();
-		e.metaKey && e.altKey && e.keyCode === 74 && this.FRAPP.showDevTools();
+		(e.ctrlKey || e.metaKey) && e.keyCode === 82 && self.reload();
+		(e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 74 && this.FRAPP.showDevTools();
 	});
 	
 	window.addEventListener('contextmenu', function(e) {

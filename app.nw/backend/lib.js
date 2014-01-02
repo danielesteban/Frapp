@@ -119,7 +119,7 @@ lib.prototype.createFrapp = function(session, params, callback) {
 
 	fs.exists(repoPath, function(exists) {
 		if(exists) return;
-		self.checkPath(repoPath) && mkdirp(repoPath, function() {
+		self.checkPath(repoPath) && mkdirp(path.join(config.frappsPath, session.user.login), function() {
 			ghdownload(config.boilerplateRepo, repoPath).on('end', function() {
 				self.readJSON(path.join(repoPath, 'package.json'), function(frapp) {
 					frapp.name = params.name;

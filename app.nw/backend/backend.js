@@ -145,7 +145,7 @@ BACKEND = {
 			self = this,
 			installer,
 			install = function() {
-				mkdirp(repo.fullPath, function() {
+				mkdirp(path.join(config.frappsPath, repo.author), function() {
 					ghdownload(frapp.repository.url, repo.fullPath).on('error', function(err) {
 						throw err;
 					}).on('zip', function(zipUrl) {
@@ -310,6 +310,7 @@ BACKEND = {
 		});
 		setTimeout(function() {
 			editor.WIN.setAlwaysOnTop(false);
+			editor.WIN.show();
 			callback();
 		}, 250);
 	},
