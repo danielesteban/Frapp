@@ -1,11 +1,11 @@
-var config = require('./config'),
+var config = require('./config.js'),
 	fs = require('fs'),
-	lib = require('./lib'),
+	lib = require('./lib.js'),
 	less = new (require('less')).Parser,
 	mkdirp = require('mkdirp'),
 	path = require('path'),
 	rmdir = require('rmdir'),
-	Storage = require('./storage');
+	Storage = require('./storage.js');
 
 function Frapp(frapp, backend, params, callback) {
 	var Window = backend.window.nwDispatcher.requireNwGui().Window,

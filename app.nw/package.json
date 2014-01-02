@@ -4,10 +4,11 @@
 	"author" : "Daniel Esteban Nombela <dani@hellacoders.com>",
 	"dependencies" : {
 		"github-download" : "latest",
-		"node-github" : "latest",
+		"handlebars" : "latest",
 		"less" : "latest",
 		"mkdirp" : "latest",
 		"node-dir" : "latest",
+		"node-github" : "latest",
 		"node-static" : "latest",
 		"node-uuid" : "latest",
 		"rmdir" : "latest"

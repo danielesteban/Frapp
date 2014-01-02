@@ -1,15 +1,14 @@
-var config = require('./config'),
+var config = require('./config.js'),
 	dir = require('node-dir'),
-	Frapp = require('./frapp'),
+	Frapp = require('./frapp.js'),
 	fs = require('fs'),
 	ghdownload = require('github-download'),
 	github = require('node-github'),
-	lib = require('./lib'),
+	lib = require('./lib.js'),
 	mkdirp = require('mkdirp'),
 	path = require('path'),
-	Storage = require('./storage'),
+	Storage = require('./storage.js'),
 	uuid = require('node-uuid'),
-	Window = require('nw.gui').Window,
 	frapps = [];
 
 BACKEND = {
@@ -31,7 +30,7 @@ BACKEND = {
 		}
 		if(frapps.length) return;
 		if(!menu) return this.menu();
-		Window.get().close(); 
+		require('nw.gui').Window.get().close(); 
 	},
 	checkForUpdates : function() {
 		var self = this;

@@ -11,7 +11,7 @@ The general idea is to have an environment for FreeApps coded in JavaScript with
 
 More to come...
 
-[![Install the app](https://raw.github.com/danielesteban/Frapp/master/screenshot.jpg)](https://github.com/danielesteban/Frapp/releases/download/v0.0.4/Frapp-OSX.zip)
+[![Install the app](https://f.cloud.github.com/assets/806111/1830913/a3942348-736d-11e3-85b8-1f5b41c63f5c.jpg)](https://github.com/danielesteban/Frapp/releases/download/v0.0.4/Frapp-OSX.zip)
 
 **Ecosystem**
  - [FrappBoilerplate](https://github.com/danielesteban/FrappBoilerplate): A Frapp Boilerplate with all modules ready to rock.
@@ -20,7 +20,7 @@ More to come...
  - [FrappHelloWorld](https://github.com/danielesteban/FrappHelloWorld): A hello-world Frapp. Just the basic template.
  - [FrappInstaller](https://github.com/danielesteban/FrappInstaller): Frapp Installer/Updater UI
  - [FrappSignin](https://github.com/danielesteban/FrappSignin): Sign-In to Github UI
- - [FrappsMenu](https://github.com/danielesteban/FrappsMenu): A menu of installed Frapps, with some extra features.
+ - [FrappMenu](https://github.com/danielesteban/FrappMenu): A menu of installed Frapps, with some extra features.
 
 **License**
 

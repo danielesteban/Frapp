@@ -1,5 +1,6 @@
 {
 	"name" : "session",
+	"version" : "0.0.1",
 	"js" : [
 		"session.js"
 	]

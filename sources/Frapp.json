@@ -3,7 +3,7 @@
 	"version" : "0.0.2",
 	"description" : "The official Frapp Source List. Pull-Requests are welcome ;P",
 	"mantainer" : "Daniel Esteban Nombela <dani@hellacoders.com>",
-	"url" : "https://raw.github.com/danielesteban/Frapp/master/backend/sources/Frapp.json",
+	"url" : "https://raw.github.com/danielesteban/Frapp/master/sources/Frapp.json",
 	"frapps" : [
 		{
 			"name" : "FrappBoilerplate",

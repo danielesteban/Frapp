@@ -1,7 +1,8 @@
-var config = require('./config'),
+var config = require('./config.js'),
 	dir = require('node-dir'),
 	fs = require('fs'),
 	ghdownload = require('github-download'),
+	handlebars = require('handlebars'),
 	less = require('less'),
 	mkdirp = require('mkdirp'),
 	path = require('path');
