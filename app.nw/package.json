@@ -3,8 +3,8 @@
 	"version" : "0.0.4",
 	"author" : "Daniel Esteban Nombela <dani@hellacoders.com>",
 	"dependencies" : {
+		"adm-zip" : "latest",
 		"github-download" : "latest",
-		"handlebars" : "latest",
 		"less" : "latest",
 		"mkdirp" : "latest",
 		"node-dir" : "latest",

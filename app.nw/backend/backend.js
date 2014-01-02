@@ -7,8 +7,10 @@ var config = require('./config.js'),
 	lib = require('./lib.js'),
 	mkdirp = require('mkdirp'),
 	path = require('path'),
+	rmdir = require('rmdir'),
 	Storage = require('./storage.js'),
 	uuid = require('node-uuid'),
+	zip = require('adm-zip'),
 	frapps = [];
 
 BACKEND = {
@@ -72,17 +74,46 @@ BACKEND = {
 							url : config.installerRepo
 						}
 					}, { updates : updates });
-
-					/* Update Source Lists */
-					self.getSources(function(sourceList, filename, next) {
-						lib.getJSON(sourceList.url, function(manifest, raw) {
-							if(!manifest || versionCompare(manifest.version, sourceList.version) <= 0) return next();
-							fs.writeFile(filename, raw, next);
-						});
-					}, true);
 				};
 
+			/* Update installed Frapps */
 			check();
+
+			/* Update source lists */
+			self.getSources(function(sourceList, filename, next) {
+				lib.getJSON(sourceList.url, function(manifest, raw) {
+					if(!manifest || versionCompare(manifest.version, sourceList.version) <= 0) return next();
+					fs.writeFile(filename, raw, next);
+				});
+			}, true);
+
+			/* Update Frapp engine */
+			lib.getJSON(config.frappManifest, function(manifest) {
+				if(!manifest || versionCompare(manifest.version, self.version) <= 0) return;
+				var https = require('https');
+				https.get(config.frappUpdate.replace(/{{version}}/, manifest.version), function(res) {
+					if(res.statusCode !== 302 || !res.headers['location']) return;
+					https.get(res.headers['location'], function(res) {
+						if(res.statusCode !== 200) return;
+						var update = '';
+						res.setEncoding('binary');
+						res.on('data', function(chunk) {
+							update += chunk;
+						});
+						res.on('end', function() {
+							var updatePath = path.join(config.resourcesPath, 'package.nw');
+							fs.writeFile(updatePath, update, 'binary', function(err) {
+								if(err || process.platform !== 'darwin') return;
+								var enginePath = path.join(config.resourcesPath, 'app.nw');
+								rmdir(enginePath, function() {
+									(new zip(updatePath)).extractAllTo(enginePath);
+									fs.unlink(updatePath);
+								});
+							});
+						});
+					});
+				});
+			});
 		});
 	},
 	getSources : function(callback, oneAtATime) {
