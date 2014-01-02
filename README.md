@@ -15,6 +15,7 @@ More to come...
 
 v0.0.5 (Jan 02, 2014):
 
+ - Linux: [32bit](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-linux-ia32.zip) / [64bit](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-linux-x64.zip)
  - Mac: [32bit, 10.6+](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-darwin.zip)
  - Windows: [win32](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-win32.exe)
 

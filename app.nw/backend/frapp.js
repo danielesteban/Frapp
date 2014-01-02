@@ -60,7 +60,7 @@ Frapp.prototype.onLoad = function() {
 			items.forEach(function(item) {
 				menu.append(new gui.MenuItem(item));
 			});
-			menu.popup(e.clientX + self.WIN.x - 300, e.clientY + self.WIN.y - 190);
+			menu.popup(e.clientX + self.WIN.x - (process.platform !== 'linux' ? 300 : 0), e.clientY + self.WIN.y - (process.platform !== 'linux' ? 190 : 0));
 		},
 		create : function(params, callback) {
 			if(!self.BACKEND.API.session) return;
