@@ -1,19 +1,29 @@
-FRAPP
+Frapp
 =======
 
-**Frapp is an IDE for developing desktop apps using JavaScript.**
+**An IDE for developing desktop apps using JavaScript.**
 
 Its current state is very alpha but it shows the potential. It Lets you install Frapps, autoupdates them out, and lets you edit their source.
 
 In the future, You will be able to also run the same Frapps in all the PhoneGap mobile platforms and it will automatically push your changes to github or generate pull-requests on the desktop versions.
 
-The general idea is to have an environment for FreeApps coded in JavaScript with no digital handcuffs.
+The general idea is to have an environment for FreeApps with no digital handcuffs.
 
 More to come...
 
-[![Install the app](https://f.cloud.github.com/assets/806111/1830913/a3942348-736d-11e3-85b8-1f5b41c63f5c.jpg)](https://github.com/danielesteban/Frapp/releases/download/v0.0.4/Frapp-OSX.zip)
+## Downloads
 
-**Ecosystem**
+v0.0.5 (Jan 02, 2014):
+
+ - Mac: [32bit, 10.6+](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-darwin.zip)
+ - Windows: [win32](https://github.com/danielesteban/Frapp/releases/download/v0.0.5/Frapp-win32.exe)
+
+* * *
+
+![Screenshot](https://f.cloud.github.com/assets/806111/1830913/a3942348-736d-11e3-85b8-1f5b41c63f5c.jpg)
+
+## Ecosystem
+
  - [FrappBoilerplate](https://github.com/danielesteban/FrappBoilerplate): A Frapp Boilerplate with all modules ready to rock.
  - [FrappDocs](https://github.com/danielesteban/FrappDocs): A documentation viewer.
  - [FrappEditor](https://github.com/danielesteban/FrappEditor): A code editor (with auto-reload).
@@ -22,7 +32,7 @@ More to come...
  - [FrappSignin](https://github.com/danielesteban/FrappSignin): Sign-In to Github UI
  - [FrappMenu](https://github.com/danielesteban/FrappMenu): A menu of installed Frapps, with some extra features.
 
-**License**
+## License
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
