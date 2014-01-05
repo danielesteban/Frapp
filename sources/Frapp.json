@@ -1,6 +1,6 @@
 {
 	"name" : "Frapp repository",
-	"version" : "0.0.3",
+	"version" : "0.0.4",
 	"description" : "The official Frapp Source List. Pull-Requests are welcome ;P",
 	"mantainer" : "Daniel Esteban Nombela <dani@hellacoders.com>",
 	"url" : "https://raw.github.com/danielesteban/Frapp/master/sources/Frapp.json",
@@ -25,7 +25,7 @@
 		},
 		{
 			"name" : "FrappEditor",
-			"version" : "0.0.2",
+			"version" : "0.0.3",
 			"description" : "A code editor (with auto-reload).",
 			"icon" : "img/icon.png",
 			"repository" : {
