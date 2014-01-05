@@ -200,6 +200,7 @@ BACKEND = {
 								authorsCb();		
 							};
 
+						if(!authorFrapps.length) return frappsCb();
 						authorFrapps.forEach(function(frapp) {
 							var frappPath = path.join(authorPath, frapp);
 							fs.stat(frappPath, function(err, stats) {
