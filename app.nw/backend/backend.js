@@ -9,7 +9,6 @@ var config = require('./config.js'),
 	path = require('path'),
 	rmdir = require('rmdir'),
 	Storage = require('./storage.js'),
-	uuid = require('node-uuid'),
 	zip = require('adm-zip'),
 	frapps = [];
 
@@ -20,7 +19,7 @@ BACKEND = {
 		if(uuid) {
 			var index = false;
 			frapps.forEach(function(f, i) {
-				f.uuid === uuid && (index = i);
+				f.UUID === uuid && (index = i);
 				f.FRAPP.repository.type === 'git' && f.FRAPP.repository.url === config.menuRepo && (menu = true);
 			});
 			index !== false && frapps.splice(index, 1);
@@ -239,7 +238,6 @@ BACKEND = {
 					API : self,
 					window : window
 				}, params, function(frapp) {
-					frapp.uuid = uuid.v4();
 					frapps.push(frapp);
 					callback && callback(frapp);
 				});
@@ -307,7 +305,7 @@ BACKEND = {
 		editor.WIN.setAlwaysOnTop(true);
 		frapps.forEach(function(f) {
 			var repo = lib.getRepoData(f.FRAPP);
-			file.indexOf(repo.path) === 0 && f.uuid !== editor.uuid && f.reload();
+			file.indexOf(repo.path) === 0 && f.UUID !== editor.UUID && f.reload();
 		});
 		setTimeout(function() {
 			editor.WIN.setAlwaysOnTop(false);
@@ -330,11 +328,29 @@ BACKEND = {
 (function() {
 	var frappsServer = new (require('node-static').Server)(config.frappsPath, {cache: 0}),
 		modulesServer = new (require('node-static').Server)(config.modulesPath, {cache: 0}),
+		storageServer = new (require('node-static').Server)(config.storagePath, {cache: 0}),
 		httpServer = require('http').createServer(function(request, response) {
 			request.addListener('end', function() {
 		    	if(request.url.substr(0, 9) === '/modules/') {
 		    		request.url = request.url.substr(8);
 		    		modulesServer.serve(request, response);
+		    	} else if(request.url.substr(0, 9) === '/storage/') {
+		    		request.url = request.url.substr(9);
+		    		var p = request.url.indexOf('/'),
+		    			uuid = request.url.substr(0, p),
+		    			index = false;
+
+		    		request.url = request.url.substr(p);
+					frapps.forEach(function(f, i) {
+						f.UUID === uuid && (index = i);
+					});
+					if(index === false) {
+						response.writeHead(403, {});
+						return response.end();
+					}
+					var repo = lib.getRepoData(frapps[index].FRAPP);
+					request.url = '/' + repo.author + '/' + repo.name + request.url;
+					storageServer.serve(request, response);
 		    	} else frappsServer.serve(request, response);
 		    }).resume();
 		});

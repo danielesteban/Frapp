@@ -6,7 +6,8 @@ var config = require('./config.js'),
 	mkdirp = require('mkdirp'),
 	path = require('path'),
 	rmdir = require('rmdir'),
-	Storage = require('./storage.js');
+	Storage = require('./storage.js'),
+	uuid = require('node-uuid');
 
 function Frapp(frapp, backend, params, callback) {
 	var Window = backend.window.nwDispatcher.requireNwGui().Window,
@@ -18,7 +19,8 @@ function Frapp(frapp, backend, params, callback) {
 	this.FRAPP = frapp;
 	this.BACKEND = backend;
 	this.STORAGE = new Storage(repo.author + ':' + repo.name, backend.window);
-	this.FILESTORAGE = new FileStorage(repo);
+	this.UUID = uuid.v4();
+	this.FILESTORAGE = new FileStorage(repo, this.UUID);
 	this.WIN = Window.open('http://localhost:' + backend.API.httpPort + '/' + repo.author + '/' + repo.name + '/' + frapp.main, {
 		position : 'center',
 		title : frapp.window && frapp.window.title ? frapp.window.title : frapp.name,
@@ -30,7 +32,7 @@ function Frapp(frapp, backend, params, callback) {
 	});
 	this.WIN.on('close', function() {
 		this.close(true);
-		backend.API.exit(self.uuid);
+		backend.API.exit(self.UUID);
 	});
 	this.WIN.once('loaded', self.onLoad.bind(self));
 }

@@ -5,10 +5,10 @@ var config = require('./config.js'),
 	path = require('path'),
 	rmdir = require('rmdir');
 
-function FileStorage(frapp) {
+function FileStorage(frapp, uuid) {
 	this.namespace = {
 		path : path.join(config.storagePath, frapp.author, frapp.name),
-		url : '/storage/' + frapp.author + '/' + frapp.name + '/'
+		url : '/storage/' + uuid + '/'
 	};
 }
 
