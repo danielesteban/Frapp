@@ -1,4 +1,5 @@
 var config = require('./config.js'),
+	FileStorage = require('./fileStorage.js'),
 	fs = require('fs'),
 	lib = require('./lib.js'),
 	less = new (require('less')).Parser,
@@ -17,6 +18,7 @@ function Frapp(frapp, backend, params, callback) {
 	this.FRAPP = frapp;
 	this.BACKEND = backend;
 	this.STORAGE = new Storage(repo.author + ':' + repo.name, backend.window);
+	this.FILESTORAGE = new FileStorage(repo);
 	this.WIN = Window.open('http://localhost:' + backend.API.httpPort + '/' + repo.author + '/' + repo.name + '/' + frapp.main, {
 		position : 'center',
 		title : frapp.window && frapp.window.title ? frapp.window.title : frapp.name,
@@ -79,6 +81,15 @@ Frapp.prototype.onLoad = function() {
 				});
 			});
 		},
+		fileStorage : (function() {
+			var fs = self.FILESTORAGE;
+			return {
+				get : fs.get.bind(fs),
+				set : fs.set.bind(fs),
+				remove : fs.remove.bind(fs),
+				clear : fs.clear.bind(fs)
+			};
+		})(),
 		getSources : function(callback) {
 			self.BACKEND.API.getSources(callback);
 		},
@@ -167,7 +178,13 @@ Frapp.prototype.onLoad = function() {
 			self.BACKEND.API.signout();
 		},
 		storage : (function() {
-			return self.STORAGE;
+			var s = self.STORAGE;
+			return {
+				get : s.get.bind(s),
+				set : s.set.bind(s),
+				remove : s.remove.bind(s),
+				clear : s.clear.bind(s)
+			};
 		})(),
 		unlink : function(filePath, fileName, callback) {
 			filePath = path.join(config.frappsPath, filePath, path.basename(fileName));

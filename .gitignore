@@ -1,5 +1,6 @@
 .DS_Store
+app.nw/node_modules/
 Frapp.app/
 frapps/
-app.nw/node_modules/
+storage/
 setup.iss
