@@ -43,6 +43,32 @@ lib.prototype.checkPath = function(p, root) {
 	return path.normalize(p).indexOf(root) === 0;
 };
 
+lib.prototype.readDir = function(root, dir, callback) {
+	(!dir || !this.checkPath(path.join(root, dir), root)) && (dir = '.');
+	fs.readdir(path.join(root, dir), function(err, items) {
+		var count = 0,
+			data = [],
+			cb = function() {
+				if(++count < items.count) return;
+				callback(data);
+			};
+
+		dir !== '.' && items.unshift('..');
+		items.forEach(function(item, i) {
+			var itemPath = path.join(dir, item);
+			fs.stat(path.join(root, itemPath), function(err, stats) {
+				data[i] = {
+					name : item,
+					fullName : itemPath,
+					type : stats.isDirectory() ? 'directory' : 'file',
+					path : dir
+				};
+				cb();
+			});
+		});
+	});
+};
+
 lib.prototype.compileTemplates = function(frapp, callback) {
 	var window = frapp.WIN.window,
 		repo = this.getRepoData(frapp.FRAPP),

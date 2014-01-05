@@ -87,6 +87,7 @@ Frapp.prototype.onLoad = function() {
 				get : fs.get.bind(fs),
 				set : fs.set.bind(fs),
 				remove : fs.remove.bind(fs),
+				list : fs.list.bind(fs),
 				clear : fs.clear.bind(fs)
 			};
 		})(),
@@ -97,29 +98,7 @@ Frapp.prototype.onLoad = function() {
 			self.BACKEND.API.installed(callback);
 		},
 		listDirectory : function(dir, callback) {
-			(!dir || !lib.checkPath(path.join(config.frappsPath, dir))) && (dir = '.');
-			fs.readdir(path.join(config.frappsPath, dir), function(err, items) {
-				var count = 0,
-					data = [],
-					cb = function() {
-						if(++count < items.count) return;
-						callback(data);
-					};
-
-				dir !== '.' && items.unshift('..');
-				items.forEach(function(item, i) {
-					var itemPath = path.join(dir, item);
-					fs.stat(path.join(config.frappsPath, itemPath), function(err, stats) {
-						data[i] = {
-							name : item,
-							fullName : itemPath,
-							type : stats.isDirectory() ? 'directory' : 'file',
-							path : dir
-						};
-						cb();
-					});
-				});
-			});
+			lib.readDir(config.frappsPath, dir, callback);
 		},
 		load : function(frapp, params, closeCaller, callback) {
 			self.BACKEND.API.load(frapp, params, function(frapp) {

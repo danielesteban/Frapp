@@ -40,6 +40,10 @@ FileStorage.prototype.remove = function(filePath, name, callback) {
 	fs.unlink(path.join(this.namespace.path, filePath || '.', name), callback);
 };
 
+FileStorage.prototype.list = function(dir, callback) {
+	lib.readDir(this.namespace.path, dir, callback);
+};
+
 FileStorage.prototype.clear = function(callback) {
 	rmdir(this.namespace.path, callback);
 };
