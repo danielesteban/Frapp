@@ -72,15 +72,13 @@ Frapp.prototype.onLoad = function() {
 		},
 		edit : function(frapp) {
 			var repo = lib.getRepoData(frapp);
-			lib.readJSON(path.join(repo.fullPath, 'package.json'), function(frapp) {
-				self.BACKEND.API.load({
-					repository : {
-						type : 'git',
-						url : 'https://github.com/danielesteban/FrappEditor.git'
-					}
-				}, {
-					path : repo.path
-				});
+			self.BACKEND.API.load({
+				repository : {
+					type : 'git',
+					url : 'https://github.com/danielesteban/FrappEditor.git'
+				}
+			}, {
+				frapp : repo
 			});
 		},
 		fileStorage : (function() {
@@ -134,6 +132,9 @@ Frapp.prototype.onLoad = function() {
 			var newFilePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(newFileName)));
 			filePath = path.normalize(path.join(config.frappsPath, filePath || '.', path.basename(fileName || '.')));
 			lib.checkPath(filePath) && lib.checkPath(newFilePath) && fs.rename(filePath, newFilePath, callback);
+		},
+		repo : function() {
+			return lib.getRepoData(self.FRAPP);
 		},
 		rmdir : function(dirPath, callback) {
 			dirPath = path.join(config.frappsPath, dirPath);
@@ -190,21 +191,22 @@ Frapp.prototype.onLoad = function() {
 	});
 	
 	window.addEventListener('contextmenu', function(e) {
-		var items = [
+		var L = self.BACKEND.window.L,
+			items = [
 				{
-					label : 'Reload',
+					label : L.reload,
 					click : function() {
 						self.reload();
 					}
 				},
 				{
-					label : 'Show DevTools',
+					label : L.showDevtools,
 					click : function() {
 						self.WIN.showDevTools();
 					}
 				},
 				{
-					label : 'Edit ' + self.FRAPP.name + '\'s Source Code',
+					label : L.editSource.replace(/%s/, self.FRAPP.name),
 					click : function() {
 						window.FRAPP.edit(self.FRAPP);
 					}
@@ -212,7 +214,7 @@ Frapp.prototype.onLoad = function() {
 			];
 
 		if(self.FRAPP.repository.type !== 'git' || self.FRAPP.repository.url !== config.menuRepo) items.splice(1, 0, {
-			label : 'Frapps Menu',
+			label : L.frappMenu,
 			click : function() {
 				self.BACKEND.API.menu();
 			}

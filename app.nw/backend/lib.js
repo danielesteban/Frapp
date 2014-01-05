@@ -49,11 +49,10 @@ lib.prototype.readDir = function(root, dir, callback) {
 		var count = 0,
 			data = [],
 			cb = function() {
-				if(++count < items.count) return;
+				if(++count < items.length) return;
 				callback(data);
 			};
 
-		dir !== '.' && items.unshift('..');
 		items.forEach(function(item, i) {
 			var itemPath = path.join(dir, item);
 			fs.stat(path.join(root, itemPath), function(err, stats) {

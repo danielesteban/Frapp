@@ -214,7 +214,8 @@ BACKEND = {
 											return frappsCb();
 										}
 										manifest.ctime = stats.ctime;
-										manifest.path = '/' + author + '/' + frapp;
+										manifest.path = path.join(author, frapp);
+										manifest.url = '/' + author + '/' + frapp;
 										frapps.push(manifest);
 										frappsCb();
 									});
@@ -273,6 +274,8 @@ BACKEND = {
 					type : 'git',
 					url : config.signinRepo
 				}
+			}, {}, function(frapp) {
+				frapp.FRAPP.window.title = frapp.WIN.title = L.signInWithGithub;
 			});
 			callback && callback(false);
 			return;
@@ -323,6 +326,19 @@ BACKEND = {
 		return manifest.version;
 	})()
 };
+
+/* Lang */
+setTimeout(function() {
+	var append = function(script) {
+			var s = document.createElement('script');
+			s.charset = 'utf-8';
+			s.src = script;
+			document.body.appendChild(s);
+		};
+
+	append('./lang.js');
+	append(path.join(config.modulesPath, 'lang', 'lang.js'));
+}, 0);
 
 /* HTTP Server */
 (function() {
